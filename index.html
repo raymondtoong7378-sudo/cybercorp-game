@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberCorp Academy - AI Training Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+            background-image: 
+                linear-gradient(90deg, #00ffff 1px, transparent 1px),
+                linear-gradient(#00ffff 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: matrix-scroll 20s linear infinite;
+        }
+        
+        @keyframes matrix-scroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(20px); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,255,255,0.3);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 10px;
+            animation: glow-pulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow-pulse {
+            from { text-shadow: 0 0 20px #00ffff; }
+            to { text-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff; }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ff00ff;
+            margin-bottom: 20px;
+        }
+        
+        .ai-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: rotate 4s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .mode-card {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1));
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff00, #ffff00);
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mode-card:hover::before {
+            opacity: 1;
+        }
+        
+        .mode-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,255,255,0.3);
+        }
+        
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .mode-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .mode-description {
+            color: #cccccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+        }
+        
+        .start-btn:hover {
+            background: linear-gradient(45deg, #00ff00, #00ffff);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,255,0.5);
+        }
+        
+        .game-area {
+            display: none;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(26,26,46,0.8));
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        
+        .question-card {
+            background: rgba(0,255,255,0.1);
+            border: 1px solid #00ffff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+        
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .option {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #666;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #cccccc;
+        }
+        
+        .option:hover {
+            border-color: #00ffff;
+            background: rgba(0,255,255,0.2);
+            color: #ffffff;
+        }
+        
+        .option.correct {
+            border-color: #00ff00;
+            background: rgba(0,255,0,0.2);
+            color: #00ff00;
+        }
+        
+        .option.incorrect {
+            border-color: #ff0000;
+            background: rgba(255,0,0,0.2);
+            color: #ff0000;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .progress-bar {
+            width: 200px;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #00ff00);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: rgba(0,255,0,0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .feedback.incorrect {
+            background: rgba(255,0,0,0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,0,255,0.5);
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #666;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #cccccc;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            border-color: #00ffff;
+            color: #00ffff;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .game-modes {
+                grid-template-columns: 1fr;
+            }
+            
+            .score-board {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .progress-bar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="ai-avatar">🤖</div>
+            <h1>CyberCorp Academy</h1>
+            <p class="subtitle">AI-Powered Corporate Digital Training Hub</p>
+            <p>Master Microsoft Apps & Corporate Digital Best Practices</p>
+        </div>
+        
+        <div id="main-menu" class="game-modes">
+            <div class="mode-card" onclick="startGame('apps')">
+                <span class="mode-icon">☁️</span>
+                <h3 class="mode-title">Microsoft Apps Mastery</h3>
+                <p class="mode-description">Learn Teams, OneDrive, SharePoint, Power Platform, and AI tools like Copilot. Become a productivity ninja!</p>
+                <button class="start-btn">Launch Mission</button>
+            </div>
+            
+            <div class="mode-card" onclick="startGame('security')">
+                <span class="mode-icon">🛡️</span>
+                <h3 class="mode-title">Digital Security Protocol</h3>
+                <p class="mode-description">Master cybersecurity, identify phishing, protect corporate data, and follow compliance guidelines.</p>
+                <button class="start-btn">Secure Network</button>
+            </div>
+            
+            <div class="mode-card" onclick="startGame('ethics')">
+                <span class="mode-icon">⚖️</span>
+                <h3 class="mode-title">Corporate Ethics Code</h3>
+                <p class="mode-description">Learn professional communication, prevent cyberbullying, and maintain workplace digital etiquette.</p>
+                <button class="start-btn">Join Ethics Squad</button>
+            </div>
+        </div>
+        
+        <div id="game-area" class="game-area">
+            <div class="score-board">
+                <button class="back-btn" onclick="backToMenu()">← Back to Hub</button>
+                <div class="score">Score: <span id="score">0</span>/100</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                <div>Question <span id="current-q">1</span> of <span id="total-q">5</span></div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <p id="feedback-text"></p>
+                <button class="next-btn" onclick="nextQuestion()">Next Challenge →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameData = {
+            apps: [
+                {
+                    question: "🚀 Which Microsoft app is best for real-time collaboration and video meetings?",
+                    options: ["Outlook", "Teams", "OneDrive", "SharePoint"],
+                    correct: 1,
+                    explanation: "Teams is Microsoft's hub for teamwork - chat, meetings, calls, and collaboration all in one place!"
+                },
+                {
+                    question: "☁️ You need to store and share large files with your team. Which app should you use?",
+                    options: ["Teams Chat", "OneDrive for Business", "Outlook", "Forms"],
+                    correct: 1,
+                    explanation: "OneDrive for Business provides secure cloud storage with easy sharing and collaboration features!"
+                },
+                {
+                    question: "🤖 Microsoft Copilot can help you with which of these tasks?",
+                    options: ["Writing emails", "Creating presentations", "Analyzing data", "All of the above"],
+                    correct: 3,
+                    explanation: "Copilot is your AI assistant that works across all Microsoft apps to boost productivity!"
+                },
+                {
+                    question: "📊 Which Power Platform tool helps create automated workflows?",
+                    options: ["Power BI", "Power Apps", "Power Automate", "Power Pages"],
+                    correct: 2,
+                    explanation: "Power Automate creates workflows that save time by automating repetitive tasks!"
+                },
+                {
+                    question: "📋 For project management and task tracking, which app works best?",
+                    options: ["Sway", "Planner", "Forms", "Delve"],
+                    correct: 1,
+                    explanation: "Planner helps organize teamwork with visual task boards and progress tracking!"
+                }
+            ],
+            security: [
+                {
+                    question: "🎣 You receive an urgent email asking for your password. What should you do?",
+                    options: ["Reply with password immediately", "Call IT to verify first", "Forward to colleagues", "Ignore completely"],
+                    correct: 1,
+                    explanation: "Always verify suspicious requests through official channels. This could be a phishing attempt!"
+                },
+                {
+                    question: "🔐 What makes a strong corporate password?",
+                    options: ["Company name + 123", "12+ characters with mixed types", "Your birthday", "Same as personal password"],
+                    correct: 1,
+                    explanation: "Strong passwords use 12+ characters with uppercase, lowercase, numbers, and symbols!"
+                },
+                {
+                    question: "📱 You find a USB drive in the parking lot. What's the safest action?",
+                    options: ["Plug it in to see contents", "Give it to IT security", "Keep it for personal use", "Throw it away"],
+                    correct: 1,
+                    explanation: "Unknown USB drives can contain malware. Always report to IT security!"
+                },
+                {
+                    question: "🌐 When working remotely, which network should you avoid?",
+                    options: ["Company VPN", "Home WiFi", "Public café WiFi", "Mobile hotspot"],
+                    correct: 2,
+                    explanation: "Public WiFi is unsecured and can expose sensitive corporate data to hackers!"
+                },
+                {
+                    question: "📧 A colleague asks you to share confidential client data via personal email. You should:",
+                    options: ["Share immediately", "Use secure company channels only", "Post on Teams", "Print and hand deliver"],
+                    correct: 1,
+                    explanation: "Confidential data must only be shared through approved, secure company channels!"
+                }
+            ],
+            ethics: [
+                {
+                    question: "💬 A coworker posts inappropriate memes in the team chat. You should:",
+                    options: ["Join in with more memes", "Report to HR/manager", "Ignore it completely", "Share with other teams"],
+                    correct: 1,
+                    explanation: "Inappropriate content creates a hostile work environment. Report it to maintain professionalism!"
+                },
+                {
+                    question: "📱 During a video call, what's considered professional?",
+                    options: ["Muted when not speaking", "Appropriate background", "Professional attire", "All of the above"],
+                    correct: 3,
+                    explanation: "Professional video calls require muting, appropriate backgrounds, and business attire!"
+                },
+                {
+                    question: "📊 You accidentally see confidential salary information. What should you do?",
+                    options: ["Share with curious colleagues", "Keep it confidential", "Post on social media", "Discuss at lunch"],
+                    correct: 1,
+                    explanation: "Confidential information must remain confidential, even if accessed accidentally!"
+                },
+                {
+                    question: "⏰ Best practice for responding to work messages after hours:",
+                    options: ["Respond immediately always", "Respect work-life boundaries", "Ignore until next week", "Auto-reply with complaints"],
+                    correct: 1,
+                    explanation: "Healthy work-life boundaries benefit everyone. Respond during business hours unless truly urgent!"
+                },
+                {
+                    question: "🤝 When giving feedback in digital communications, you should:",
+                    options: ["Be harsh to make a point", "Use constructive, respectful language", "Copy everyone on criticism", "Use all caps for emphasis"],
+                    correct: 1,
+                    explanation: "Constructive, respectful feedback builds better relationships and improves outcomes!"
+                }
+            ]
+        };
+        
+        let currentGame = '';
+        let currentQuestion = 0;
+        let score = 0;
+        let questions = [];
+        
+        function startGame(gameType) {
+            currentGame = gameType;
+            questions = gameData[gameType];
+            currentQuestion = 0;
+            score = 0;
+            
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('total-q').textContent = questions.length;
+            
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('score').textContent = score;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            updateProgress();
+        }
+        
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const feedbackText = document.getElementById('feedback-text');
+            
+            options.forEach((option, index) => {
+                option.onclick = null; // Disable further clicks
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            if (selectedIndex === question.correct) {
+                score += 20;
+                feedback.className = 'feedback correct';
+                feedbackText.textContent = `🎉 Correct! ${question.explanation}`;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedbackText.textContent = `❌ Incorrect. ${question.explanation}`;
+            }
+            
+            feedback.style.display = 'block';
+            document.getElementById('score').textContent = score;
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const gameArea = document.getElementById('game-area');
+            let rank = '';
+            let message = '';
+            
+            if (score >= 80) {
+                rank = '🏆 Cyber Champion';
+                message = 'Outstanding! You\'re ready to lead digital transformation!';
+            } else if (score >= 60) {
+                rank = '🥈 Digital Specialist';
+                message = 'Great job! You have solid digital skills!';
+            } else {
+                rank = '🥉 Tech Trainee';
+                message = 'Good start! Keep learning to level up your skills!';
+            }
+            
+            gameArea.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #00ffff;">Mission Complete!</h2>
+                    <div style="font-size: 4rem; margin: 20px 0;">${rank.split(' ')[0]}</div>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: #ff00ff;">${rank}</h3>
+                    <p style="font-size: 1.5rem; margin-bottom: 20px;">Final Score: ${score}/100</p>
+                    <p style="font-size: 1.2rem; margin-bottom: 30px; color: #cccccc;">${message}</p>
+                    <button class="start-btn" onclick="backToMenu()" style="font-size: 1.2rem; padding: 15px 40px;">Return to Hub</button>
+                </div>
+            `;
+        }
+        
+        function backToMenu() {
+            // Reset all game variables
+            currentGame = '';
+            currentQuestion = 0;
+            score = 0;
+            questions = [];
+            
+            // Reset the game area HTML to original state
+            document.getElementById('game-area').innerHTML = `
+                <div class="score-board">
+                    <button class="back-btn" onclick="backToMenu()">← Back to Hub</button>
+                    <div class="score">Score: <span id="score">0</span>/100</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress"></div>
+                    </div>
+                    <div>Question <span id="current-q">1</span> of <span id="total-q">5</span></div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question" id="question"></div>
+                    <div class="options" id="options"></div>
+                </div>
+                
+                <div class="feedback" id="feedback">
+                    <p id="feedback-text"></p>
+                    <button class="next-btn" onclick="nextQuestion()">Next Challenge →</button>
+                </div>
+            `;
+            
+            // Show main menu and hide game area
+            document.getElementById('main-menu').style.display = 'grid';
+            document.getElementById('game-area').style.display = 'none';
+        }
+        
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97172ade431ffdec',t:'MTc1NTU4MDQ2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
